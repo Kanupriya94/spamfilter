@@ -1,6 +1,6 @@
 import requests
 import io
-import PyPDF2
+from PyPDF2 import PdfReader
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.naive_bayes import MultinomialNB
 
@@ -13,20 +13,20 @@ spam_documents = []
 for filename in ["spam1.pdf", "spam2.pdf", "spam3.pdf"]:
     response = requests.get(f"{spam_url}/{filename}")
     pdf_file = io.BytesIO(response.content)
-    pdf_reader = PyPDF2.PdfFileReader(pdf_file)
+    pdf_reader = PdfReader(pdf_file)
     content = ""
-    for i in range(pdf_reader.getNumPages()):
-        content += pdf_reader.getPage(i).extractText()
+    for i in range(len(pdf_reader.pages)):
+        content += pdf_reader.pages[i].extract_text()
     spam_documents.append(content)
 
 ham_documents = []
 for filename in ["ham1.pdf", "ham2.pdf", "ham3.pdf"]:
     response = requests.get(f"{ham_url}/{filename}")
     pdf_file = io.BytesIO(response.content)
-    pdf_reader = PyPDF2.PdfFileReader(pdf_file)
+    pdf_reader = PdfReader(pdf_file)
     content = ""
-    for i in range(pdf_reader.getNumPages()):
-        content += pdf_reader.getPage(i).extractText()
+    for i in range(len(pdf_reader.pages)):
+        content += pdf_reader.pages[i].extract_text()
     ham_documents.append(content)
 
 # Vectorize the documents using the bag of words approach
